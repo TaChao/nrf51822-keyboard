@@ -1,5 +1,5 @@
-#ifndef _keyboard_conf_h_
-#define _keyboard_conf_h_
+#ifndef KEYBOARD_CONF_H
+#define KEYBOARD_CONF_H
 
 #include <stdint.h>
 #include "nrf_adc.h"
@@ -99,6 +99,10 @@ static const uint8_t row_pin_array[MATRIX_ROWS] = {29,25,23,4,3};
 #define UPDATE_IN_PROGRESS_LED      PIN_EXT5
 #define ADVERTISING_LED_PIN_NO      PIN_EXT5
 #define CONNECTED_LED_PIN_NO        PIN_EXT5
+
+#define LED_0_MASK (1<<PIN_EXT1)
+#define LED_1_MASK (1<<PIN_EXT2)
+#define LED_2_MASK (1<<PIN_EXT3)
 
 #define LED_POSITIVE
 

@@ -40,7 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     #define MATRIX_COLS 14
     
     #define KEYBOARD_DEBUG         //启用此选项，通电后不需要按键就启动蓝牙,但无法通过power_sleep按键手动关机;如果关闭，开启蓝牙需要按Space+U，但可手动关机。
-    #define KEYBOARD_REVB          //键盘硬件版本配置
+    #define KEYBOARD_REVD          //键盘硬件版本配置
     
     #define UART_SUPPORT
     //#define BLE_LINK_SEC         //启用此选项，蓝牙配对时要求输入密码,并启用MITM

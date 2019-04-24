@@ -39,6 +39,7 @@
 #include "battery_service.h"
 #include "ble_hid_service.h"
 #include "ble_services.h"
+#include "backlight.h"
 
 #include "keyboard.h"
 #include "keyboard_conf.h"
@@ -573,6 +574,7 @@ int main(void)
 #endif
     keyboard_init();
     services_init();
+    low_power_init();
 
     // set driver after all module inited.
     host_set_driver(&driver);
