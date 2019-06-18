@@ -1,5 +1,22 @@
-#include <stdint.h>
+/*
+Copyright (C) 2018,2019 Jim Jiang <jim@lotlab.org>
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 #include "usb_descriptor.h"
+#include <stdint.h>
 // #include <stdio.h>
 
 /** \brief 获取文本描述符
@@ -9,11 +26,10 @@
  * \return uint8_t 文本描述符长度
  *
  */
-static uint8_t getStringDescriptor(uint8_t order, uint8_t **strPtor)
+static uint8_t getStringDescriptor(uint8_t order, uint8_t** strPtor)
 {
     uint8_t header = 0, strlen = 0;
-    do
-    {
+    do {
         header += strlen;
         if (header >= sizeof(StringDescriptor)) // 超过长度就直接返回
         {
@@ -22,7 +38,7 @@ static uint8_t getStringDescriptor(uint8_t order, uint8_t **strPtor)
         strlen = StringDescriptor[header];
     } while (order--);
 
-    *strPtor = (uint8_t *)&StringDescriptor[header];
+    *strPtor = (uint8_t*)&StringDescriptor[header];
     return strlen;
 }
 
@@ -30,51 +46,36 @@ static uint8_t getStringDescriptor(uint8_t order, uint8_t **strPtor)
  *
  * \param type1 uint8_t 描述符类型1 (hType)
  * \param type2 uint8_t 描述符类型2 (lType)
- * \param len uint8_t* 描述符长度
  * \param strPtr uint8_t** 描述符指针
- * \return uint8_t 是否为最后一个描述符
+ * \return uint8_t 描述符长度
  *
  */
-uint8_t GetUsbDescriptor(uint8_t type1, uint8_t type2, uint8_t index, uint8_t *len, uint8_t **strPtr)
+uint8_t GetUsbDescriptor(uint8_t type1, uint8_t type2, uint8_t index, uint8_t** strPtr)
 {
     // printf_tiny("getDesc:%x, %x\n", type1, type2);
-    switch (type1)
-    {
+    switch (type1) {
     /**< 设备描述符 */
     case 1:
-        *strPtr = (uint8_t *)&DeviceDescriptor[0];
-        *len = sizeof(DeviceDescriptor);
-        break;
+        *strPtr = (uint8_t*)&DeviceDescriptor[0];
+        return sizeof(DeviceDescriptor);
     /**< 配置描述符 */
     case 2:
-        *strPtr = (uint8_t *)&ConfigDescriptor[0];
-        *len = sizeof(ConfigDescriptor);
-        break;
+        *strPtr = (uint8_t*)&ConfigDescriptor[0];
+        return sizeof(ConfigDescriptor);
     /**< 字符串描述符 */
     case 3:
-        *len = getStringDescriptor(type2, strPtr);
-        break;
+        return getStringDescriptor(type2, strPtr);
     /**< HID 报告描述符 */
     case 0x22:
-        if (index < sizeof(ReportDescriptor))
-        {
+        if (index < sizeof(ReportDescriptor)) {
             *strPtr = ReportDescriptor[index].pointer;
-            *len = ReportDescriptor[index].length;
-
-            if (index == sizeof(ReportDescriptor) - 1)
-            {
-                return 1; // 设备准备就绪
-            }
+            return ReportDescriptor[index].length;
+        } else {
+            // 接口超出上限
+            return 0xff;
         }
-        else // 接口超出上限
-        {
-            *len = 0xff;
-        }
-        break;
 
     default:
-        *len = 0xff; //不支持的命令或者出错
-        break;
+        return 0xff; //不支持的命令或者出错
     }
-    return 0;
 }

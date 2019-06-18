@@ -3,7 +3,7 @@
 #include "system.h"
 #include <stdio.h>
 
-#define UART0_BUAD 38400
+#define UART0_BUAD 57600
 
 /** \brief 配置系统时钟
  *
@@ -13,10 +13,30 @@
  */
 void CfgSysClock()
 {
-    SAFE_MOD = 0x55; //Enter unsafe mode
-    SAFE_MOD = 0xAA;
-    CLOCK_CFG = CLOCK_CFG & ~MASK_SYS_CK_SEL | 0x04; // 12MHz
-    SAFE_MOD = 0x00;
+	SAFE_MOD = 0x55;
+	SAFE_MOD = 0xAA;
+#if FREQ_SYS == 24000000
+	CLOCK_CFG = CLOCK_CFG & ~MASK_SYS_CK_SEL | 0x06; // 24MHz
+#endif
+#if FREQ_SYS == 16000000
+	CLOCK_CFG = CLOCK_CFG & ~MASK_SYS_CK_SEL | 0x05; // 16MHz
+#endif
+#if FREQ_SYS == 12000000
+	CLOCK_CFG = CLOCK_CFG & ~MASK_SYS_CK_SEL | 0x04; // 12MHz
+#endif
+#if FREQ_SYS == 6000000
+	CLOCK_CFG = CLOCK_CFG & ~MASK_SYS_CK_SEL | 0x03; // 6MHz
+#endif
+#if FREQ_SYS == 3000000
+	CLOCK_CFG = CLOCK_CFG & ~MASK_SYS_CK_SEL | 0x02; // 3MHz
+#endif
+#if FREQ_SYS == 750000
+	CLOCK_CFG = CLOCK_CFG & ~MASK_SYS_CK_SEL | 0x01; // 750KHz
+#endif
+#if FREQ_SYS == 187500
+	CLOCK_CFG = CLOCK_CFG & ~MASK_SYS_CK_SEL | 0x00; // 187.5KHz
+#endif
+	SAFE_MOD = 0x00;
 }
 
 /** \brief 初始化UART
@@ -48,7 +68,6 @@ void InitUART()
 }
 */
 
-
 /*******************************************************************************
 * Function Name  : Delayus(uint16_t n)
 * Description    : us延时函数
@@ -56,11 +75,43 @@ void InitUART()
 * Output         : None
 * Return         : None
 *******************************************************************************/
-void DelayUs(uint16_t n)  // 以uS为单位延时
+void DelayUs(uint16_t n) // 以uS为单位延时
 {
-	while (n) {  // total = 12~13 Fsys cycles, 1uS @Fsys=12MHz
-		++ SAFE_MOD;  // 2 Fsys cycles, for higher Fsys, add operation here
-		-- n;
+#ifdef FREQ_SYS
+#if FREQ_SYS <= 6000000
+	n >>= 2;
+#endif
+#if FREQ_SYS <= 3000000
+	n >>= 2;
+#endif
+#if FREQ_SYS <= 750000
+	n >>= 4;
+#endif
+#endif
+	while (n)
+	{				// total = 12~13 Fsys cycles, 1uS @Fsys=12MHz
+		++SAFE_MOD; // 2 Fsys cycles, for higher Fsys, add operation here
+#ifdef FREQ_SYS
+#if FREQ_SYS >= 14000000
+		++SAFE_MOD;
+#endif
+#if FREQ_SYS >= 16000000
+		++SAFE_MOD;
+#endif
+#if FREQ_SYS >= 18000000
+		++SAFE_MOD;
+#endif
+#if FREQ_SYS >= 20000000
+		++SAFE_MOD;
+#endif
+#if FREQ_SYS >= 22000000
+		++SAFE_MOD;
+#endif
+#if FREQ_SYS >= 24000000
+		++SAFE_MOD;
+#endif
+#endif
+		--n;
 	}
 }
 
@@ -71,36 +122,36 @@ void DelayUs(uint16_t n)  // 以uS为单位延时
 * Output         : None
 * Return         : None
 *******************************************************************************/
-void DelayMs(uint16_t n)                                                  // 以mS为单位延时
+void DelayMs(uint16_t n) // 以mS为单位延时
 {
-	while ( n ) {
+	while (n)
+	{
 		DelayUs(1000);
-        -- n;
+		--n;
 	}
 }
 
-
 void PrintHex(uint8_t *data, uint8_t len)
 {
-    for (int i = 0; i < len; i++)
-    {
-        printf_tiny("%x ", data[i]);
-    }
+	for (int i = 0; i < len; i++)
+	{
+		printf_tiny("%x ", data[i]);
+	}
 }
 
 int putchar(int c)
 {
-    while (TI == 0)
-        ;
-    TI = 0;
-    SBUF = c;
-    return c;
+	while (TI == 0)
+		;
+	TI = 0;
+	SBUF = c;
+	return c;
 }
 
 int getchar()
 {
-    while (RI == 0)
-        ;
-    RI = 0;
-    return SBUF;
+	while (RI == 0)
+		;
+	RI = 0;
+	return SBUF;
 }

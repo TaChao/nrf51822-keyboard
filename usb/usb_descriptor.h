@@ -1,10 +1,28 @@
+/*
+Copyright (C) 2018,2019 Jim Jiang <jim@lotlab.org>
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 #ifndef __USB_DESCRIPTOR__
 #define __USB_DESCRIPTOR__
+#include <stdint.h>
 
-#define USB_VID               0x3D41    // Vendor ID (VID)
-#define USB_PID               0x1919        // Product ID (PID)
+#define USB_VID               0x1209        // Vendor ID (VID)
+#define USB_PID               0x0514        // Product ID (PID)
 #define VER_FW_H              0x08          // Device release number, in binary-coded decimal
-#define VER_FW_L              0x11          // Device release number, in binary-coded decimal
+#define VER_FW_L              0x12          // Device release number, in binary-coded decimal
 #define USB_STR_INDEX_SERNUM  3
 #define SIZEOF_DEVICE_DESCRIPTOR  0x12
 #define EP0_PACKET_SIZE       0x08
@@ -15,7 +33,7 @@
 uint8_t const DeviceDescriptor[SIZEOF_DEVICE_DESCRIPTOR] = {
     SIZEOF_DEVICE_DESCRIPTOR,               // Length of this descriptor
     0x01,                                   // Type code of this descriptor
-    0x00, 0x02,                             // Release of USB spec
+    0x10, 0x01,                             // Release of USB spec
     0x00,                                   // Device's base class code
     0x00,                                   // Device's sub class code
     0x00,                                   // Device's protocol type code
@@ -220,7 +238,7 @@ uint8_t const StringDescriptor[] = {
 
     14,        // Length of this string descriptor
     3,        // bDescriptorType
-    '1',0x00,'9',0x00,'0',0x00,'3',0x00,'2',0x00,'2',0x00,
+    '1',0x00,'9',0x00,'0',0x00,'5',0x00,'2',0x00,'1',0x00,
 
     // String index4, Configuration String
 
@@ -337,7 +355,7 @@ uint8_t const report_desc_HID2[]=
     0x09, 0x01,    // Usage Page (Vendor Defined)
     0xa1, 0x01,    // COLLECTION (Application)
     0x85, 0x3f,    // Report ID (Vendor Defined)
-    0x95, 0x04,    // Report Count
+    0x95, 0x01,    // Report Count
     0x75, 0x08,    // Report Size
     0x25, 0x01,    // Usage Maximum
     0x15, 0x01,    // Usage Minimum

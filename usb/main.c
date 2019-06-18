@@ -1,16 +1,32 @@
-#include <string.h>
-#include <stdbool.h>
-#include <stdio.h>
+/*
+Copyright (C) 2018,2019 Jim Jiang <jim@lotlab.org>
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 #include "CH554_SDCC.h"
+#include "app_timer.h"
 #include "compiler.h"
-#include "system.h"
 #include "endpoints.h"
 #include "interrupt.h"
-#include "usb_comm.h"
+#include "system.h"
 #include "uart.h"
-#include "app_timer.h"
+#include "usb_comm.h"
+#include <stdbool.h>
+#include <stdio.h>
+#include <string.h>
 
-bool usb_evt = false;
 bool usb_sleep = false;
 bool ping_skip_next = false;
 
@@ -40,7 +56,6 @@ static void CH554USBDevWakeup()
 static void DeviceInterrupt(void) __interrupt INT_NO_USB __using 1 //USB中断服务程序,使用寄存器组1
 {
     UsbIsr();
-    usb_evt = true;
 }
 
 /**
@@ -187,7 +202,7 @@ static void ping_packet()
         }
         else
         {
-            if (usb_evt)
+            if (usb_ready)
                 uart_send(PACKET_USB_STATE, NULL, 0);
             else
                 uart_send(PACKET_PING, NULL, 0);
@@ -199,9 +214,9 @@ static void ping_packet()
  * @brief USB睡眠事件
  *
  */
-void UsbSuspendEvt()
+void UsbSuspendEvt(bool suspend)
 {
-    usb_sleep = true;
+    usb_sleep = suspend;
 }
 
 /**
@@ -230,6 +245,7 @@ static void main()
     EA = 1;         //允许单片机中断
     UEP1_T_LEN = 0; //预使用发送长度一定要清空
     UEP2_T_LEN = 0; //预使用发送长度一定要清空
+    UEP3_T_LEN = 0;
 
     while (1)
     {
