@@ -214,7 +214,6 @@ void led_uninit(void)
 #ifdef LED_USR3
     nrf_gpio_cfg_default(LED_USR3);
 #endif
-    led_timer_init();
 }
 
 /**
