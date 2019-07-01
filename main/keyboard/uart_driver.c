@@ -416,17 +416,6 @@ bool uart_is_using_usb()
 }
 
 /**
- * @brief 是否同时使用USB和BLE进行通讯
- * 
- * @return true 
- * @return false 
- */
-bool uart_is_using_all()
-{
-    return uart_current_mode == UART_MODE_ALL;
-}
-
-/**
  * @brief 在蓝牙模式和USB模式中进行切换
  * 
  */
@@ -439,11 +428,6 @@ void uart_switch_mode()
 //		    led_set_bit(LED_BIT_BLE, 0);
         break;
     case UART_MODE_BLE_OVERRIDE:
-        uart_send_packet(PACKET_SWITCH_TO_USB, NULL, 0);
-        uart_current_mode = UART_MODE_ALL;
-//		    led_set_bit(LED_BIT_BLE, 0);
-        break;
-	case UART_MODE_ALL:
         uart_send_packet(PACKET_SWITCH_TO_USB, NULL, 0);
         uart_current_mode = UART_MODE_USB;
 //		    led_set_bit(LED_BIT_BLE, 0);
