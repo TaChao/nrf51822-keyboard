@@ -33,16 +33,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifdef KEYBOARD_60
 
-    #define PRODUCT         "GT BLE60 rev.D"
+    #define PRODUCT         "GT BLE PAD"
 
-    /* key matrix size */
+    /* key matrix size */ 
     #define MATRIX_ROWS 5
-    #define MATRIX_COLS 14
-
-    #define KEYBOARD_REVD          //键盘硬件版本配置
+    #define MATRIX_COLS 4
     
     #define UART_SUPPORT
-    #define BLE_LINK_SEC         //启用此选项，蓝牙配对时要求输入密码,并启用MITM
+    //#define BLE_LINK_SEC         //启用此选项，蓝牙配对时要求输入密码,并启用MITM
     #define WDT_ENABLE           //启用看门狗
 #endif
 
@@ -70,7 +68,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // 键盘省电参数
 #define SLEEP_SLOW_TIMEOUT 120                // 键盘闲置多久后转入慢速扫描模式 (s)
 #define SLEEP_OFF_TIMEOUT  900               // 键盘闲置多久后转入自动关机 (s)
-//#define BLE_IDLE_TIMEOUT 60                  // 蓝牙离线后多久转入自动关机 (s)，必须小于SLEEP_OFF_TIMEOUT
 #define KEYBOARD_FAST_SCAN_INTERVAL 4        // 通常模式下，多久扫描一次键盘 (ms)
 #define KEYBOARD_SLOW_SCAN_INTERVAL 100      // 慢速模式下，多久扫描一次键盘 (ms)
 
